@@ -260,6 +260,15 @@ button:disabled {
   font-weight: 700;
 }
 
+.achievement {
+  margin: 0;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  background: #fff8e9;
+  color: #7b4a08;
+  font-weight: 900;
+}
+
 table {
   width: 100%;
   min-width: 1120px;

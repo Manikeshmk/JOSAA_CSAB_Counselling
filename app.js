@@ -90,6 +90,21 @@ function rankForRow(row, mainsRank, advancedRank) {
   return { rank: mainsRank, exam: "JEE Main" };
 }
 
+function achievementMessage(items) {
+  const instituteNames = items.map((row) => normalize(row.institute));
+
+  if (instituteNames.some((name) => name.startsWith("indian institute of technology"))) {
+    return "Congratulations, you can be IITian.";
+  }
+  if (instituteNames.some((name) => name.includes("national institute of technology"))) {
+    return "Congratulations, you can be NITian.";
+  }
+  if (instituteNames.some((name) => name.includes("indian institute of information technology"))) {
+    return "Congratulations, you can be IIITian.";
+  }
+  return "";
+}
+
 function parseTsv(text, source) {
   const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/).filter((line) => line.trim());
   if (lines.length < 2) return [];
@@ -199,6 +214,16 @@ function renderTable(target, items) {
   `;
 }
 
+function renderPossibleResults(target, items, message) {
+  renderTable(target, items);
+  if (!message) return;
+
+  const banner = document.createElement("p");
+  banner.className = "achievement";
+  banner.textContent = message;
+  target.prepend(banner);
+}
+
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => ({
     "&": "&amp;",
@@ -241,6 +266,7 @@ function reportSection(title, items, total) {
 }
 
 function buildReport(mainsRank, advancedRank, quotas, seatTypes, genders, possible, shownPossible, near, shownNear, includeNear) {
+  const message = achievementMessage(possible);
   const lines = [
     "JEE Institute/Program Rank Results",
     `Generated at: ${new Date().toLocaleString("en-IN")}`,
@@ -250,8 +276,13 @@ function buildReport(mainsRank, advancedRank, quotas, seatTypes, genders, possib
     `Quota: ${valuesText(quotas)}`,
     `Seat type: ${valuesText(seatTypes)}`,
     `Gender: ${valuesText(genders)}`,
-    reportSection("Possible options: closing rank greater than your rank", shownPossible, possible.length),
   ];
+
+  if (message) {
+    lines.push("", message);
+  }
+
+  lines.push(reportSection("Possible options: closing rank greater than your rank", shownPossible, possible.length));
 
   if (includeNear) {
     lines.push(reportSection("Near misses: closing rank less than your rank, nearest first", shownNear, near.length));
@@ -295,8 +326,9 @@ form.addEventListener("submit", (event) => {
   const { possible, near } = filterRows(mainsRank, advancedRank, quotas, seatTypes, genders);
   const shownPossible = applyLimit(possible, possibleLimit);
   const shownNear = applyLimit(near, nearLimit);
+  const message = achievementMessage(possible);
 
-  renderTable(possibleResults, shownPossible);
+  renderPossibleResults(possibleResults, shownPossible, message);
   nearSection.hidden = !includeNear;
   if (includeNear) renderTable(nearResults, shownNear);
 
