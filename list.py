@@ -113,6 +113,18 @@ def rank_for_row(item, mains_rank, advanced_rank):
     return mains_rank, "JEE Main"
 
 
+def achievement_message(matches):
+    institute_names = [normalize(item["institute"]) for item in matches]
+
+    if any(name.startswith("indian institute of technology") for name in institute_names):
+        return "Congratulations, you can be IITian."
+    if any("national institute of technology" in name for name in institute_names):
+        return "Congratulations, you can be NITian."
+    if any("indian institute of information technology" in name for name in institute_names):
+        return "Congratulations, you can be IIITian."
+    return ""
+
+
 def load_rows(quotas, seat_types, genders):
     matches = []
 
@@ -294,6 +306,7 @@ def main():
         )
 
     possible_matches = load_possible_matches(mains_rank, advanced_rank, quotas, seat_types, genders)
+    message = achievement_message(possible_matches)
 
     output_parts = [
         "JEE Institute/Program Rank Results",
@@ -305,12 +318,17 @@ def main():
         f"Seat type: {describe_values(seat_types)}",
         f"Gender: {describe_values(genders)}",
         "",
+    ]
+    if message:
+        output_parts.extend([message, ""])
+
+    output_parts.append(
         render_results(
             "Possible options: closing rank greater than your rank",
             possible_matches,
             possible_limit,
-        ),
-    ]
+        )
+    )
 
     if show_near_missed:
         near_missed_matches = load_near_missed_matches(mains_rank, advanced_rank, quotas, seat_types, genders)
