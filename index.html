@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JEE Institute Finder</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace" aria-labelledby="app-title">
+        <div class="masthead">
+          <div>
+            <p class="eyebrow">JEE counselling rank tool</p>
+            <h1 id="app-title">Institute Finder</h1>
+          </div>
+          <div class="rank-visual" aria-hidden="true">
+            <span style="--height: 36%"></span>
+            <span style="--height: 62%"></span>
+            <span style="--height: 48%"></span>
+            <span style="--height: 82%"></span>
+            <span style="--height: 58%"></span>
+            <span style="--height: 74%"></span>
+          </div>
+        </div>
+
+        <form id="filters" class="filters">
+          <label class="file-drop">
+            <span>Data files</span>
+            <input id="dataFiles" type="file" accept=".txt" multiple>
+            <strong id="fileStatus">Choose round and CSAB text files</strong>
+          </label>
+
+          <label class="toggle advanced-toggle">
+            <input id="advancedQualified" type="checkbox">
+            <span>JEE Advanced qualified</span>
+          </label>
+
+          <label id="advancedRankWrap" class="is-hidden">
+            JEE Advanced rank
+            <input id="advancedRank" type="number" min="1" placeholder="5000">
+          </label>
+
+          <label>
+            JEE Main rank
+            <input id="mainsRank" type="number" min="1" placeholder="45000" required>
+          </label>
+
+          <label>
+            Quota
+            <input id="quota" type="text" value="AI, All India, Other State">
+          </label>
+
+          <label>
+            Seat type
+            <input id="seatType" type="text" value="OPEN">
+          </label>
+
+          <label>
+            Gender
+            <input id="gender" type="text" value="Gender-Neutral">
+          </label>
+
+          <label>
+            Possible limit
+            <input id="possibleLimit" type="text" value="100">
+          </label>
+
+          <label>
+            Near-miss limit
+            <input id="nearLimit" type="text" value="100">
+          </label>
+
+          <label class="toggle">
+            <input id="showNear" type="checkbox" checked>
+            <span>Show nearest lower closing ranks</span>
+          </label>
+
+          <div class="actions">
+            <button type="submit">Find options</button>
+            <button id="downloadReport" type="button" disabled>Download report</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="summary-grid" aria-label="Summary">
+        <div>
+          <span id="loadedCount">0</span>
+          <p>Rows loaded</p>
+        </div>
+        <div>
+          <span id="possibleCount">0</span>
+          <p>Possible matches</p>
+        </div>
+        <div>
+          <span id="nearCount">0</span>
+          <p>Near misses</p>
+        </div>
+      </section>
+
+      <section class="results-section">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Closing rank greater than your rank</p>
+            <h2>Possible options</h2>
+          </div>
+        </div>
+        <div id="possibleResults" class="table-wrap"></div>
+      </section>
+
+      <section id="nearSection" class="results-section">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Closing rank less than your rank</p>
+            <h2>Nearest lower ranks</h2>
+          </div>
+        </div>
+        <div id="nearResults" class="table-wrap"></div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+# Generated private outputs
+results/
+rank_results_*.txt
+
+# Python cache/build artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local environment and secrets
+.env
+.env.*
+*.key
+*.pem
+
+# Local notes / editor files
+plan.txt
+.vscode/
+.idea/
+
+# OS files
+Thumbs.db
+.DS_Store
