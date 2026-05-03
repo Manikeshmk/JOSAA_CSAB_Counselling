@@ -9,13 +9,50 @@ const advancedQualified = document.querySelector("#advancedQualified");
 const advancedRankWrap = document.querySelector("#advancedRankWrap");
 const advancedRankInput = document.querySelector("#advancedRank");
 const mainsRankInput = document.querySelector("#mainsRank");
+const websiteVisitCount = document.querySelector("#websiteVisitCount");
+const resultUseCount = document.querySelector("#resultUseCount");
 const loadedCount = document.querySelector("#loadedCount");
 const possibleCount = document.querySelector("#possibleCount");
 const nearCount = document.querySelector("#nearCount");
 
 const defaultQuotas = ["AI", "All India", "Other State"];
+const counterKeys = {
+  websiteVisits: "jeeInstituteFinder.websiteVisits",
+  resultUses: "jeeInstituteFinder.resultUses",
+};
 let rows = [];
 let lastReport = "";
+
+function readCounter(key) {
+  try {
+    const value = Number(localStorage.getItem(key));
+    return Number.isFinite(value) && value > 0 ? value : 0;
+  } catch {
+    return 0;
+  }
+}
+
+function writeCounter(key, value) {
+  try {
+    localStorage.setItem(key, String(value));
+  } catch {
+    return value;
+  }
+  return value;
+}
+
+function incrementCounter(key) {
+  return writeCounter(key, readCounter(key) + 1);
+}
+
+function formatCount(value) {
+  return value.toLocaleString("en-IN");
+}
+
+function updateUsageStats() {
+  websiteVisitCount.textContent = formatCount(readCounter(counterKeys.websiteVisits));
+  resultUseCount.textContent = formatCount(readCounter(counterKeys.resultUses));
+}
 
 function normalize(value) {
   return String(value ?? "").trim().toLowerCase().replace(/\s+/g, " ");
@@ -291,6 +328,9 @@ function buildReport(mainsRank, advancedRank, quotas, seatTypes, genders, possib
   return lines.join("\n");
 }
 
+incrementCounter(counterKeys.websiteVisits);
+updateUsageStats();
+
 fileInput.addEventListener("change", async (event) => {
   await loadFiles(event.target.files);
 });
@@ -332,6 +372,8 @@ form.addEventListener("submit", (event) => {
   nearSection.hidden = !includeNear;
   if (includeNear) renderTable(nearResults, shownNear);
 
+  incrementCounter(counterKeys.resultUses);
+  updateUsageStats();
   possibleCount.textContent = possible.length.toLocaleString("en-IN");
   nearCount.textContent = includeNear ? near.length.toLocaleString("en-IN") : "0";
   lastReport = buildReport(mainsRank, advancedRank, quotas, seatTypes, genders, possible, shownPossible, near, shownNear, includeNear);
